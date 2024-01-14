@@ -19,7 +19,8 @@ class Environment:
 
 
     def setup(self):
-        
+
+        # definē karti
         self.ws = np.array([[1,1,1,1,1,1,1,1,1,1,1,1],
                             [1,0,0,0,0,1,0,0,0,1,1,1],
                             [1,0,1,0,0,1,1,0,1,0,0,1],
@@ -33,7 +34,7 @@ class Environment:
                             [1,0,0,0,0,0,1,0,0,0,0,1],
                             [1,1,1,1,1,1,1,1,1,1,1,1]])
         
-        self.ws[self.ws == 1] = self.obstacle_value #-1#2
+        self.ws[self.ws == 1] = self.obstacle_value
 
         self.rbt_ws = np.copy(self.ws)
         self.probability_ws = np.copy(self.ws)
@@ -42,12 +43,11 @@ class Environment:
 
     def init_robot(self):
 
-        # Define four predefined numbers
+        # definē rotācijas
         possible_theta = [0, 90, 180, 270]
 
         # nosaka brīvās vietas kartē
         self.clear_space = np.where(self.rbt_ws == 0)
-        # print(self.clear_space)
         
         # izvēlās nenoteiktu brīvo lauciņu un rotāciju
         random_index = np.random.choice(range(len(self.clear_space[0])))
@@ -100,10 +100,10 @@ class Environment:
         plt.show()
 
     def normalize(self, ws):
-        # Apply normalization only to non-2 values
-        non_2_indices = (ws != self.obstacle_value)
-        sum_non_2 = np.sum(ws[non_2_indices])
-        ws[non_2_indices] /= sum_non_2
+        # normalizē vērtības, kas nav šķērslis
+        free_values = (ws != self.obstacle_value)
+        sum_free = np.sum(ws[free_values])
+        ws[free_values] /= sum_free
         return ws
 
 class Sensors:
@@ -114,43 +114,41 @@ class Sensors:
         self.start_setting = env.start_setting
         self.obstacle_value = env.obstacle_value
         self.init_sensors()
-        # self.first_sensor_reading()
 
     def init_sensors(self):
 
-        # Count the number of occurrences of 0 in the array
-        # count_zeros = np.count_nonzero(self.ws == 0)
+        # saskaita brīvos laukus
         count_zeros = np.count_nonzero(self.env.probability_ws == 0)
-        print(count_zeros)
+        # print(count_zeros)
 
-        # self.ws = self.ws.astype(float)
         self.env.probability_ws = self.env.probability_ws.astype(float)
-        # Avoid division by zero
+        # iedod visiem brīvajiem lauciņiem vienādu sākuma varbūtību
         if count_zeros > 0:
-            # Replace each 0 with 1 divided by the count
-            # self.ws[self.ws == 0] = 1 / count_zeros
             self.env.probability_ws[self.env.probability_ws == 0] = 1 / count_zeros
 
-        # self.env.show_env(self.ws, title="Environment with equal occupancy possibility")
         self.env.show_env(self.env.probability_ws, title="Environment with equal occupancy possibility")
 
+    # iegūst sensora rādījumus atkarībā no pagrieziena leņķa
     def get_direction_values(self, grid, theta):
 
         error = True
+        # kad atļauta kļūda, kļūdas varbūtības lasījumiem |pa kreisi|diag. pa kreisi|taisni|diag. pa labi|pa labi|
         error_probabilities = [0.25, 0.2, 0.1, 0.2, 0.25]
 
+        # nogriež liekos lasījumus un pēc vajadzības parotē lasījumu vertikāli
         if theta == 0:
-            grid[2, 0] = grid[2, 1] = grid[2, 2] = 0#-2
+            grid[2, 0] = grid[2, 1] = grid[2, 2] = 0
         elif theta == 90:
-            grid[0, 0] = grid[1, 0] = grid[2, 0] = 0#-2
+            grid[0, 0] = grid[1, 0] = grid[2, 0] = 0
             grid = np.rot90(grid, k=1)
         elif theta == 180:
-            grid[0, 0] = grid[0, 1] = grid[0, 2] = 0#-2
+            grid[0, 0] = grid[0, 1] = grid[0, 2] = 0
             grid = np.rot90(grid, k=2)
         elif theta == 270:
-            grid[0, 2] = grid[1, 2] = grid[2, 2] = 0#-2
+            grid[0, 2] = grid[1, 2] = grid[2, 2] = 0
             grid = np.rot90(grid, k=3)
 
+        # nolasa vērtības
         left = grid[1,0]
         diag_left = grid[0,0]
         front = grid[0,1]
@@ -159,7 +157,7 @@ class Sensors:
 
         readings = [left, diag_left, front, diag_right, right]
 
-        # Introduce errors based on the error_probabilities
+        # atkarībā no kļūdu varbūtības ievieš tās
         if error_probabilities is not None and error == True:
             print(f"Values before introducing errors {readings}")
             readings = self.introduce_errors(readings, error_probabilities)
@@ -171,6 +169,7 @@ class Sensors:
             grid[0,2] = readings[3]
             grid[1,2] = readings[4]
 
+        # atgriež lasījumu atpakaļ oriģinālajā rotācijā, lai to var salīdzināt kartē
         if theta == 90:
             grid = np.rot90(grid, k=3)
         elif theta == 180:
@@ -184,7 +183,7 @@ class Sensors:
         
         row, col, theta = robot_position
 
-        # Create a 3x3 subgrid
+        # izveido 3x3 režģi
         subgrid = ws[col-1:col+2, row-1:row+2]
         readings, subgrid = self.get_direction_values(subgrid, theta)
 
@@ -194,6 +193,7 @@ class Sensors:
         print("\nValues around the robot:")
         print(subgrid)
 
+        # vizualizē sensora mērījumu
         plt.imshow(subgrid, cmap='gray_r', interpolation='nearest')
         plt.xticks(np.arange(-0.5, len(subgrid[0]), 1), [])
         plt.yticks(np.arange(-0.5, len(subgrid), 1), [])
@@ -204,13 +204,14 @@ class Sensors:
         return readings
     
     def introduce_errors(self, readings, error_probabilities):
-        # Introduce errors to each sensor reading separately
-        for i in range(len(readings)):  # Exclude the last element (theta)
+        # katram sensora lasījumam atsevišķi ieviest kļūdu
+        for i in range(len(readings)):
             if error_probabilities[i] is not None and np.random.rand() < error_probabilities[i]:
-                # Introduce an error by randomly selecting from [0, 2]
+                # Ieviest kļūdu, pēc nenoteiktības izvēloties, vai lasījums rādīs brīvu lauciņu vai šķērsli 
                 readings[i] = np.random.choice([0, self.obstacle_value])
         return readings
     
+    # palīgfunkcija pozīcijas novērtēšanai
     def rotate_indices(self, i, j, rotation):
         if rotation == 0:
             views = [[i , j-1],[i-1, j-1],[i-1, j],[i-1, j+1],[i, j+1]]
@@ -235,7 +236,7 @@ class Sensors:
         pos_right = 0.1
         beliefs = [pos_left,pos_diag_left,pos_front,pos_diag_right,pos_right]
 
-        # Loop through all possible positions in the environment
+        # pārbauda katru brīvo lauciņu kartē
         possible_positions = []
         for i, j in zip(self.env.clear_space[0], self.env.clear_space[1]):
             views = self.rotate_indices(i, j, readings[5])
@@ -248,9 +249,10 @@ class Sensors:
             )
             possible_positions.append(((i, j), 1 * similarity_score))
 
-        # Sort the possible positions based on the similarity score
+        # sašķiro vērtības pēc ticamības vērtējuma
         possible_positions.sort(key=lambda x: x[1], reverse=True)
 
+        # For debugging
         # print("\nPossible robot positions based on sensor readings:")
         # for position, score in possible_positions:
         #     print(f"Position: {position[1], position[0]}, Similarity Score: {score}")
@@ -259,6 +261,7 @@ class Sensors:
     
     def update_environment(self, estimated_positions, ws):
 
+        # ticamības vērtības; ja pozīcija ir ar augstāku ticamību nekā kļūdains mērījums, to pareizina ar 0.8
         weight_possible = 0.8
         weight_other = 0.2
 
@@ -275,22 +278,13 @@ class Sensors:
                 else:
                     ws[i, j] *= weight_other
                         
-        # Apply normalization only to non-2 values
+        # normalizē
         ws = self.env.normalize(ws)
 
         return ws
 
     def show_updated_environment(self):
         self.env.show_env(self.ws, title="Updated Environment")
-
-    def first_sensor_reading(self):
-
-        readings = self.read_sensors(self.start_setting, self.env.ws)
-        possible_positions = self.estimate_position(readings)
-        updated_ws = self.update_environment(possible_positions)
-        self.show_updated_environment()
-
-        return updated_ws
 
 class Robot:
     def __init__(self, env):
@@ -303,17 +297,15 @@ class Robot:
         row, col, theta = current_position
 
         robot_position = current_position
-
-        # print(row, col)
         action = False
 
-        # Introduce a 10% chance that neither movement nor rotation happens
+        # 10% iespēja, ka nenotiks darbība, atgriež esošo vērtību
         if np.random.rand() < 0.1:
             print("No movement or rotation (1/10 chance)")
             action = "stay"
             return robot_position, action, current_position
 
-        # Calculate the next position based on the robot's current direction
+        # atkarībā no pagrieziena leņķa, aprēķina iespējamo nākamo pozīciju
         next_row, next_col = row, col
 
         if theta == 0:
@@ -325,11 +317,9 @@ class Robot:
         elif theta == 270:
             next_row -= 1
 
-        # print(next_row, next_col)
-        # print(self.rbt_ws[next_col, next_row])
         print(f"For coordinates {next_row},{next_col} value is {self.rbt_ws[next_col,next_row]}")
 
-        # Check if the next position is not an obstacle
+        # pārbauda, vai nākamā pozīcija nav šķērslis
         if (next_row < 11 and next_row > 0 and 
             next_col < 11 and next_col > 0 and 
             self.rbt_ws[next_col, next_row] == 0):
@@ -337,7 +327,7 @@ class Robot:
             robot_position = [next_row, next_col, theta]
             action = "move"
         else:
-            # If not, rotate 90 degrees
+            # ja ir, rotē par 90grādiem pulksteņrādītāja virzienā
             print("Rotating 90 degrees")
             robot_position[2] = (theta + 90) % 360
             action = "rotate"
@@ -348,6 +338,7 @@ class Robot:
     
     def update_robot_pos(self, robot_position, action, current_position):
 
+        # ja notika kustība, atjauno robota kartē robota faktisko lokāciju un veco atbrīvo
         if action == "move":
             self.rbt_ws[current_position[1], current_position[0]] = 0
             self.rbt_ws[robot_position[1], robot_position[0]] = 1.5
@@ -358,42 +349,48 @@ class Robot:
         
         obst_pos = np.where(ws == self.env.obstacle_value)
 
+        # izveido kartes masku un nonullē šķēršļus
         mask = np.copy(ws)
         mask[mask == self.env.obstacle_value] = 0
 
-        # Extract current position information
-        row, col, theta = current_position
+        _, _, theta = current_position
 
         print(action)
+        # pareizina lauciņus ar varbūtībām ar 0.2, iegūstot nepārvietošanās situāciju
         ws[ws != self.env.obstacle_value] *= 0.2
+        mask *= 0.2
 
+        # ja nenotiek darbība, atgriež iepriekš iegūto varbūtību karti
         if not action:
-            # self.env.show_env(ws, title="ws after no movement")
             ws = self.env.normalize(ws)
             return ws
 
-        # Specify the shift for each axis (negative values for left/up, positive values for right/down)
+        # nosaka kustības virzienu, lai pārvietotu varbūtību vērtības
         elif action == "move":
             if theta == 0:
-                shift_rows = -1  # shift one position down
+                shift_rows = -1  # pastumt uz leju
                 shift_cols = 0
             elif theta == 180:
-                shift_rows = 1  # shift one position up
+                shift_rows = 1  # pastumt uz augšu
                 shift_cols = 0
             elif theta == 90:
                 shift_rows = 0
-                shift_cols = +1  # shift one position to the left
+                shift_cols = +1  # pastumt pa kreisi
             elif theta == 270:
                 shift_rows = 0
-                shift_cols = -1  # shift one position to the right
+                shift_cols = -1  # pastumt pa labi
         
+            # pabīda varbūtību masku kustības virzienā
             mask_shifted = np.roll(mask, (shift_rows, shift_cols), axis=(0, 1))
             
+            # sareizina pakustinātās vērtības ar 0.8 (veiksmīgo pārvietojumu)
             mask_shifted = mask_shifted * 0.8
+            # no oriģinālās maskas atgūst nozaudētās vērtības, kas tika nonullētas pabīdot karti
             mask_other = np.where(mask_shifted == 0, mask, mask_shifted)
-            # mask = mask * mask_shifted
+            # sareizina masku ar pabīdīto masku
             mask = mask * mask_other
 
+            # atgriež kartē šķēršļus
             mask[obst_pos] = self.env.obstacle_value
             mask = self.env.normalize(mask)
 
@@ -402,19 +399,24 @@ class Robot:
         elif action == "rotate":
             ws[ws != self.env.obstacle_value] *= 0.8
             ws = self.env.normalize(ws)
-            # self.env.show_env(ws, title="Mask after rotate")
             return ws
 
         return ws
 
 def sensor_step(env, sensor, robot_position, ws):
+    # nolasa sensoru rādījumus
     readings = sensor.read_sensors(robot_position, ws)
+    # iegūst iespējamās pozīcijas
     possible_positions = sensor.estimate_position(readings)
+    # atjaunina karti
     env.probability_ws = sensor.update_environment(possible_positions, env.probability_ws)
 
 def robot_step(robot, env, robot_position):
+    # iegūst nākamo robota soli
     robot_position, action, current_position = robot.get_next_step(robot_position)
+    # atjaunina robota stāvokli
     robot.update_robot_pos(robot_position, action, current_position)
+    # atjaunina karti
     env.probability_ws = robot.update_robot_position_probability(env.probability_ws, robot_position, action)
 
     return robot_position
