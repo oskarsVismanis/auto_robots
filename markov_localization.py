@@ -56,7 +56,7 @@ class Environment:
         # iestata to par robota (x, y)
         self.start_setting = [self.clear_space[1][random_index],self.clear_space[0][random_index],theta]
         #test
-        self.start_setting = [5, 7, 90]
+        # self.start_setting = [3, 3, 90]
 
         # pievieno to kartei
         self.rbt_ws[self.start_setting[1], self.start_setting[0]] = 1.5
