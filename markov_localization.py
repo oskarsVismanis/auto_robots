@@ -55,6 +55,8 @@ class Environment:
         
         # iestata to par robota (x, y)
         self.start_setting = [self.clear_space[1][random_index],self.clear_space[0][random_index],theta]
+        #test
+        self.start_setting = [5, 7, 90]
 
         # pievieno to kartei
         self.rbt_ws[self.start_setting[1], self.start_setting[0]] = 1.5
@@ -420,6 +422,21 @@ def robot_step(robot, env, robot_position):
     env.probability_ws = robot.update_robot_position_probability(env.probability_ws, robot_position, action)
 
     return robot_position
+
+def show__final_env(ws, title="Final probability visualization"):
+    plt.imshow(ws, cmap='PiYG', interpolation='nearest')
+    plt.xticks(np.arange(-0.5, len(ws[0]), 1), [])
+    plt.yticks(np.arange(-0.5, len(ws), 1), [])
+    plt.grid(True, color='black', linewidth=0.5)
+
+    # Find the coordinates of the maximum value in the probability grid
+    max_coords = np.unravel_index(np.argmax(ws), ws.shape)
+
+    # Plot a red dot at the location of the maximum value
+    plt.plot(max_coords[1], max_coords[0], 'ro', markersize=10)  # 'ro' specifies red color and circle marker
+
+    plt.title(title)
+    plt.show()
     
 def main():
     env = Environment()
@@ -465,6 +482,9 @@ def main():
     # fifth robot movement
     robot_position = robot_step(robot, env, robot_position)
     env.show_env(env.probability_ws, title="Fifth robot movement update")
+
+    show__final_env(env.probability_ws, 'Final probability visualization')
+    env.show_env(robot.rbt_ws, robot_position, 'Final robot state visualization')
 
 if __name__ == "__main__":
     main()
