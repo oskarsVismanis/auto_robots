@@ -42,8 +42,6 @@ class FastSLAM:
             'covariance': 0.0,
             'weight': 0.0}
 
-        # print(self.particles)
-
     def detect_landmarks(self, robot_position, movement = 0):
         
         # nosaka kurus šķēršļus iespējams redzēt
@@ -54,7 +52,7 @@ class FastSLAM:
         for landmark in visible_landmarks:
             true_distances.append(landmark - robot_position)
              
-        # Compare new true_distances with existing ones
+        # salīdzina jauniegūtos objektus ar esošajiem
         for i, new_landmark in enumerate(true_distances):
 
             for particle_id, particle_info in self.particles.items():
@@ -66,9 +64,9 @@ class FastSLAM:
                                 if isinstance(value['distance'], (int, float))
                                 and np.isclose(value['distance'], new_landmark, atol=self.max_vision_distance/2)]
 
+            # ja objekts nav līdzīgs, pievieno to sarakstam kā jaunu
             if not similar_landmarks:
                 name = "landmark_" + str(num_keys+1)
-                # If there are no similar landmarks, add the new one to the dictionary
                 for particle_id, particle_info in self.particles.items():
                     particle_info['landmarks'][name] = {'status': 'new',
                                                         'distance': new_landmark,
@@ -76,14 +74,12 @@ class FastSLAM:
                                                         'covariance': round(np.abs(new_landmark) * self.measurement_noise_std, 4),
                                                         'weight': 0.0}
                     # print(f"New landmark {name} found at distance {new_landmark}")
+            # ja objekts ir līdzīgs, atjauno esoša objekta aprakstu  
             else:
                 similar_name, _ = similar_landmarks[0]
                 for particle_id, particle_info in self.particles.items():
                     particle_info['landmarks'][similar_name]['status'] = "existing"
                     particle_info['landmarks'][similar_name]['distance'] = new_landmark
-
-                    # print(f'Robot position: {robot_position}\n')
-                    # print(particle_info['landmarks'][similar_name]['distance'])
                     """                    
                     Z = particle_position + movement
                     Y = Z - 1 * landmark_position
@@ -96,7 +92,6 @@ class FastSLAM:
                     # Z = robot_position + movement #particle_info['landmarks'][similar_name]['distance']
                     # print(movement)
                     Z = particle_info['pos'] + movement #particle_info['landmarks'][similar_name]['distance']
-                    # print(particle_info['landmarks'][similar_name]['position'])
                     Y = Z - 1 * particle_info['landmarks'][similar_name]['position']
                     Q = self.measurement_noise_std * movement
                     S = particle_info['landmarks'][similar_name]['covariance'] + Q
@@ -105,14 +100,10 @@ class FastSLAM:
                     # print(f'Z:{Z}, Y:{Y}, S:{S}, K:{K} \n')
 
                     particle_info['landmarks'][similar_name]['position'] = particle_info['landmarks'][similar_name]['position'] + K * Y
-                    # print(particle_info['landmarks'][similar_name]['position'])
                     particle_info['landmarks'][similar_name]['covariance'] = 1 - K * 1 # p
                     particle_info['landmarks'][similar_name]['weight'] = np.abs(2*np.pi*S)**(-1/2) * np.exp(-0.5 * Y**2 / S)#np.exp(-0.5 * Y * (1/S) * Y) # w
 
                     # print(f"Similar landmark {similar_name} found. Updating distance to {new_landmark}.")
-
-        # for particle_id, particle_info in self.particles.items():
-        #     print(self.particles[particle_id])
 
     def update_robot_position(self, robot_position, movement_direction, movement_amount):
         
