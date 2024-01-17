@@ -26,3 +26,5 @@ fi
 
 # Activate the Python virtual environment
 source $VIRTUALENV_FOLDER/bin/activate
+
+cd $AUTO_ROBOTS_WS

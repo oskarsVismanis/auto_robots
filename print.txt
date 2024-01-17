@@ -1,0 +1,177 @@
+Iter_1
+particle_0
+{'pos': 8.814034507667344, 'weight': 1, 'landmarks': {'landmark_1': {'status': 'new', 'distance': 3.0, 'position': 9.0, 'covariance': 0.6, 'weight': 0.0}}}
+particle_3
+{'pos': 8.50466323091509, 'weight': 1, 'landmarks': {'landmark_1': {'status': 'new', 'distance': 3.0, 'position': 9.0, 'covariance': 0.6, 'weight': 0.0}}}
+particle_7
+{'pos': 8.307898437425507, 'weight': 1, 'landmarks': {'landmark_1': {'status': 'new', 'distance': 3.0, 'position': 9.0, 'covariance': 0.6, 'weight': 0.0}}}
+
+Iter_2
+particle_0
+{'pos': 10.646378459144845, 'weight': 1, 'landmarks': {'landmark_1': {'status': 'existing', 'distance': 2.382981798391201, 'position': 13.86795972970477, 'covariance': -1.1036677342430399, 'weight': 0.0333541362788364}, 'landmark_2': {'status': 'new', 'distance': 0.38298179839120117, 'position': 9.0, 'covariance': 0.0766, 'weight': 0.0}}}
+particle_3
+{'pos': 10.891016709800958, 'weight': 1, 'landmarks': {'landmark_1': {'status': 'existing', 'distance': 2.382981798391201, 'position': 12.653340608529936, 'covariance': -0.8224211190137185, 'weight': 0.061221066344944425}, 'landmark_2': {'status': 'new', 'distance': 0.38298179839120117, 'position': 9.0, 'covariance': 0.0766, 'weight': 0.0}}}
+particle_7
+{'pos': 10.386013873836983, 'weight': 1, 'landmarks': {'landmark_1': {'status': 'existing', 'distance': 2.382981798391201, 'position': 11.971360690950537, 'covariance': -0.6435440340231882, 'weight': 0.0860975805349975}, 'landmark_2': {'status': 'new', 'distance': 0.38298179839120117, 'position': 9.0, 'covariance': 0.0766, 'weight': 0.0}}}
+
+Iter_3
+particle_0
+{'pos': 7.661390107009325, 'weight': 1, 'landmarks': {'landmark_1': {'status': 'existing', 'distance': 0.5645564061310218, 'position': 11.747270194056133, 'covariance': -0.7360200150061209, 'weight': 1.3731820844416436}, 'landmark_2': {'status': 'existing', 'distance': -1.4354435938689782, 'position': 36.8977672415349, 'covariance': -6.650815063249779, 'weight': 5.057196883194685e-07}, 'landmark_3': {'status': 'new', 'distance': 3.5645564061310218, 'position': 14.0, 'covariance': 0.7129, 'weight': 0.0}}}
+particle_3
+{'pos': 8.13682219487719, 'weight': 1, 'landmarks': {'landmark_1': {'status': 'existing', 'distance': 0.5645564061310218, 'position': 12.519611667024153, 'covariance': 1.5626520327060245, 'weight': 0.6562602885791238}, 'landmark_2': {'status': 'existing', 'distance': -1.4354435938689782, 'position': 40.766703810218786, 'covariance': -7.16411395258279, 'weight': 7.307704209433854e-08}, 'landmark_3': {'status': 'new', 'distance': 3.5645564061310218, 'position': 14.0, 'covariance': 0.7129, 'weight': 0.0}}}
+particle_7
+{'pos': 7.522108972540684, 'weight': 1, 'landmarks': {'landmark_1': {'status': 'existing', 'distance': 0.5645564061310218, 'position': 11.265380506432894, 'covariance': 2.702579923788924, 'weight': 1.1505962848021922}, 'landmark_2': {'status': 'existing', 'distance': -1.4354435938689782, 'position': 33.05600074237628, 'covariance': -6.1045192485039514, 'weight': 3.4525411002854162e-06}, 'landmark_3': {'status': 'new', 'distance': 3.5645564061310218, 'position': 14.0, 'covariance': 0.7129, 'weight': 0.0}}}
+
+Landmark: landmark_1
+Particle 1:
+  Position: 11.747270194056133
+  Covariance: -0.7360200150061209
+  Weight: 1.3731820844416436
+
+Particle 2:
+  Position: 12.29013782911747
+  Covariance: 1.0045275303014374
+  Weight: 0.6950379836089725
+
+Particle 3:
+  Position: 12.339191910790989
+  Covariance: 0.4063451490020693
+  Weight: 0.6946942165349914
+
+Particle 4:
+  Position: 12.519611667024153
+  Covariance: 1.5626520327060245
+  Weight: 0.6562602885791238
+
+Particle 5:
+  Position: 12.903946489165659
+  Covariance: 1.0183598719039015
+  Weight: 0.5735277234823926
+
+Particle 6:
+  Position: 12.590210789757549
+  Covariance: 0.29315152750396223
+  Weight: 0.65763191354596
+
+Particle 7:
+  Position: 12.6427666562149
+  Covariance: 0.6084863595606458
+  Weight: 0.6244337107203026
+
+Particle 8:
+  Position: 11.265380506432894
+  Covariance: 2.702579923788924
+  Weight: 1.1505962848021922
+
+Particle 9:
+  Position: 22.974839345355853
+  Covariance: -15.453131998944382
+  Weight: 0.004818728786427038
+
+Particle 10:
+  Position: 12.659304159639401
+  Covariance: 0.9166330205778811
+  Weight: 0.6131105617803673
+
+Landmark: landmark_2
+Particle 1:
+  Position: 36.8977672415349
+  Covariance: -6.650815063249779
+  Weight: 5.057196883194685e-07
+
+Particle 2:
+  Position: 31.733674144649022
+  Covariance: -5.906496504520318
+  Weight: 6.6877253549702566e-06
+
+Particle 3:
+  Position: 31.13964808672877
+  Covariance: -5.8156665950261015
+  Weight: 9.000560368404118e-06
+
+Particle 4:
+  Position: 40.766703810218786
+  Covariance: -7.16411395258279
+  Weight: 7.307704209433854e-08
+
+Particle 5:
+  Position: 41.126575639961764
+  Covariance: -7.210227652334069
+  Weight: 6.104298822184731e-08
+
+Particle 6:
+  Position: 34.615699017630824
+  Covariance: -6.331217206964477
+  Weight: 1.5829043773472359e-06
+
+Particle 7:
+  Position: 35.27591265632405
+  Covariance: -6.425092797780553
+  Weight: 1.1378659720365772e-06
+
+Particle 8:
+  Position: 33.05600074237628
+  Covariance: -6.1045192485039514
+  Weight: 3.4525411002854162e-06
+
+Particle 9:
+  Position: 24.851677915197918
+  Covariance: -4.767141414135575
+  Weight: 0.0002087780914127899
+
+Particle 10:
+  Position: 36.59981444965995
+  Covariance: -6.609849401235463
+  Weight: 5.869613275082553e-07
+
+Landmark: landmark_3
+Particle 1:
+  Position: 14.0
+  Covariance: 0.7129
+  Weight: 0.0
+
+Particle 2:
+  Position: 14.0
+  Covariance: 0.7129
+  Weight: 0.0
+
+Particle 3:
+  Position: 14.0
+  Covariance: 0.7129
+  Weight: 0.0
+
+Particle 4:
+  Position: 14.0
+  Covariance: 0.7129
+  Weight: 0.0
+
+Particle 5:
+  Position: 14.0
+  Covariance: 0.7129
+  Weight: 0.0
+
+Particle 6:
+  Position: 14.0
+  Covariance: 0.7129
+  Weight: 0.0
+
+Particle 7:
+  Position: 14.0
+  Covariance: 0.7129
+  Weight: 0.0
+
+Particle 8:
+  Position: 14.0
+  Covariance: 0.7129
+  Weight: 0.0
+
+Particle 9:
+  Position: 14.0
+  Covariance: 0.7129
+  Weight: 0.0
+
+Particle 10:
+  Position: 14.0
+  Covariance: 0.7129
+  Weight: 0.0
+
