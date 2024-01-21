@@ -79,14 +79,32 @@ class MapMerge:
         return normalized_results
 
     # normalizē spektru vērtības
-    def normalize_results(self, results):
+    # def normalize_results(self, results):
 
-        min_value = min(results.values())
-        max_value = max(results.values())
+    #     min_value = min(results.values())
+    #     max_value = max(results.values())
 
-        normalized_results = {key: (value - min_value) / (max_value - min_value) for key, value in results.items()}
+    #     normalized_results = {key: (value - min_value) / (max_value - min_value) for key, value in results.items()}
 
-        return normalized_results
+    #     return normalized_results
+
+    def normalize_results(self, data):
+        if isinstance(data, dict):
+            # For dictionaries
+            min_value = min(data.values())
+            max_value = max(data.values())
+
+            normalized_data = {key: (value - min_value) / (max_value - min_value) for key, value in data.items()}
+        elif isinstance(data, np.ndarray):
+            # For arrays
+            min_value = np.min(data)
+            max_value = np.max(data)
+
+            normalized_data = (data - min_value) / (max_value - min_value)
+        else:
+            raise ValueError("Unsupported data type. Supported types: dict, np.ndarray")
+
+        return normalized_data
 
     # vizualizē spektru
     def visualize_spectrum(self, results_1, results_2=None, results_3=None, title=''):
@@ -116,6 +134,12 @@ class MapMerge:
         ax1.legend(loc='upper left')
 
         plt.title(title)
+
+        x_ticks = np.arange(0, 360, 45)
+
+        plt.xticks(x_ticks)
+
+        plt.grid(True)
         plt.show()
 
     # vizualizē karti
@@ -194,6 +218,25 @@ class MapMerge:
 
         return x_sums, y_sums
     
+    # vizualizē XY spektrus    
+    def visualize_XY_spectrums(self, x_spectrum, y_spectrum, title=''):
+
+        # salīdzina abus spektrus, lai to garumi sakristu
+        min_length = min(len(x_spectrum), len(y_spectrum))
+        x_values = np.arange(-10, 11)[:min_length]
+
+        plt.plot(x_values, x_spectrum, label='X spectrum')
+        plt.plot(x_values, y_spectrum, label='Y spectrum')
+
+        plt.xlabel('X-axis')
+        plt.ylabel('Y-axis')
+        plt.title(title)
+        plt.legend() 
+
+        plt.xticks(np.arange(-10, 11, step=1))
+        plt.grid(True)
+        plt.show()
+    
     # aprēķina X un Y spektru korelācijas
     def get_XY_correlation(self, map1_sums, map2_sums):
 
@@ -221,7 +264,7 @@ class MapMerge:
         max_ccy, max_ccy_value = max(normalized_ccy.items(), key=lambda x: x[1])
         print(f"The Y translation with the maximum value is '{max_ccy}' with a value of {max_ccy_value}.")
 
-        return max_ccx, max_ccy
+        return max_ccx, max_ccy, normalized_ccx, normalized_ccy
     
     # apvieno kartes
     def merge_maps(self, map1, map2, translation, rotation):
@@ -274,7 +317,14 @@ def main():
     map1_x, map1_y = mapmerge.get_XY_spectrums(map_1)
     map2_x, map2_y = mapmerge.get_XY_spectrums(rotated_map)
 
-    tx, ty = mapmerge.get_XY_correlation([map1_x, map1_y],[map2_x, map2_y])
+    mapmerge.visualize_XY_spectrums(mapmerge.normalize_results(map1_x), mapmerge.normalize_results(map1_y), title='map_1 X, Y spectrum')
+    mapmerge.visualize_XY_spectrums(mapmerge.normalize_results(map2_x), mapmerge.normalize_results(map2_y), title='map_2 X, Y spectrum')
+
+    tx, ty, ccx, ccy = mapmerge.get_XY_correlation([map1_x, map1_y],[map2_x, map2_y])
+    _, ccx = zip(*ccx.items())
+    _, ccy = zip(*ccy.items())
+    # mapmerge.visualize_XY_spectrums(ccx.items(), ccy.items(), title='map_1 and map_2 X,Y correlation spectrum')
+    mapmerge.visualize_XY_spectrums(ccx, ccy, title='map_1 and map_2 X,Y correlation spectrum')
     translated_map = mapmerge.translate_map(map_2, [tx, ty])
     mapmerge.visualize_map(translated_map, title='Translated map')
 
